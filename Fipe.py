@@ -51,14 +51,24 @@ def consultar_marca(opcao, marca):
 
         modelo = int(input("\nInforme o codigo do modelo: "))
 
-        for ano in data['anos']:
+        consultar_modelo_ano(opcao, marca, modelo)
+    else:
+        print("Erro ao consultar marca: ", response.status_code)
+
+
+def consultar_modelo_ano(opcao, marca, modelo):
+    url_modelo_ano = f"https://parallelum.com.br/fipe/api/v1/{opcao}/marcas/{marca}/modelos/{modelo}/anos"
+    response = requests.get(url_modelo_ano, headers=headers)
+    if response.status_code == 200:
+        data = response.json()
+        for ano in data:
             print(" Ano: ", ano['nome'], " Código: ", ano['codigo'])
 
         ano = input("\nInforme o código do ano do modelo: ")
 
         consultar_modelo(opcao, marca, modelo, ano)
     else:
-        print("Erro ao consultar marca: ", response.status_code)
+        print("Erro ao carregar anos do modelo: ", response.status_code)
 
 
 def consultar_modelo(opcao, marca, modelo, ano):
