@@ -1,6 +1,6 @@
 import requests
 
-#Simula que a requisição está sendo chamada através do navegador, esse tratamento evia o erro 406
+# Simula que a requisição está sendo chamada através do navegador, esse tratamento evita o erro 406
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'}
 
