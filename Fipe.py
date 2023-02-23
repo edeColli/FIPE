@@ -1,6 +1,6 @@
 import requests
-# from bs4 import BeautifulSoup
 
+#Simula que a requisição está sendo chamada através do navegador, esse tratamento evia o erro 406
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'}
 
@@ -36,12 +36,12 @@ def consultar(opcao):
         for marca in data:
             print("Código: ", marca['codigo'], " Nome: ", marca['nome'])
         codigo = int(input("\nInforme o código a marca: "))
-        consular_marca(opcao, codigo)
+        consultar_marca(opcao, codigo)
     else:
         print("Erro ao consultar tipo: ", response.status_code)
 
 
-def consular_marca(opcao, marca):
+def consultar_marca(opcao, marca):
     url_marca = f"https://parallelum.com.br/fipe/api/v1/{opcao}/marcas/{marca}/modelos"
     response = requests.get(url_marca, headers=headers)
     if response.status_code == 200:
