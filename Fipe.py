@@ -1,4 +1,8 @@
 import requests
+import MarcasIterator
+import ModelosIterator
+import ModeloAnoIterator
+import ModeloEspecificoIterator
 
 # Simula que a requisição está sendo chamada através do navegador, esse tratamento evita o erro 406
 headers = {
@@ -28,67 +32,47 @@ def menu_Fipe():
 
 
 def consultar(opcao):
-    url = f'https://parallelum.com.br/fipe/api/v1/{opcao}/marcas'
-    response = requests.get(url, headers=headers)
+    codigo = 0
+    marcas = MarcasIterator.MarcasIterator(opcao)
+    for marca in marcas:
+        print("Código: ", marca['codigo'], " Nome: ", marca['nome'])
 
-    if response.status_code == 200:
-        data = response.json()
-        for marca in data:
-            print("Código: ", marca['codigo'], " Nome: ", marca['nome'])
-        codigo = int(input("\nInforme o código a marca: "))
-        consultar_marca(opcao, codigo)
-    else:
-        print("Erro ao consultar tipo: ", response.status_code)
+    codigo = int(input("\nInforme o código a marca: "))
+    consultar_marca(opcao, codigo)
 
 
 def consultar_marca(opcao, marca):
-    url_marca = f"https://parallelum.com.br/fipe/api/v1/{opcao}/marcas/{marca}/modelos"
-    response = requests.get(url_marca, headers=headers)
-    if response.status_code == 200:
-        data = response.json()
-        for modelo in data['modelos']:
-            print("ID: ", modelo['codigo'], " Modelo :", modelo['nome'])
+    codigo = 0
+    modelos = ModelosIterator.ModelosIterator(opcao, marca)
+    for modelo in modelos:
+        print("Código: ", modelo['codigo'], " Nome: ", modelo['nome'])
 
-        modelo = int(input("\nInforme o codigo do modelo: "))
-
-        consultar_modelo_ano(opcao, marca, modelo)
-    else:
-        print("Erro ao consultar marca: ", response.status_code)
+    codigo = int(input("\nInforme o codigo do modelo: "))
+    consultar_modelo_ano(opcao, marca, codigo)
 
 
 def consultar_modelo_ano(opcao, marca, modelo):
-    url_modelo_ano = f"https://parallelum.com.br/fipe/api/v1/{opcao}/marcas/{marca}/modelos/{modelo}/anos"
-    response = requests.get(url_modelo_ano, headers=headers)
-    if response.status_code == 200:
-        data = response.json()
-        for ano in data:
-            print(" Ano: ", ano['nome'], " Código: ", ano['codigo'])
+    year = ''
+    anos = ModeloAnoIterator.ModeloAnoIterator(opcao, marca, modelo)
+    for ano in anos:
+        print(" Ano: ", ano['nome'], " Código: ", ano['codigo'])
 
-        ano = input("\nInforme o código do ano do modelo: ")
-
-        consultar_modelo(opcao, marca, modelo, ano)
-    else:
-        print("Erro ao carregar anos do modelo: ", response.status_code)
+    year = input("\nInforme o código do ano do modelo: ")
+    listar_modelo(opcao, marca, modelo, year)
 
 
-def consultar_modelo(opcao, marca, modelo, ano):
-    url_modelo = f"https://parallelum.com.br/fipe/api/v1/{opcao}/marcas/{marca}/modelos/{modelo}/anos/{ano}"
-    response = requests.get(url_modelo, headers=headers)
-    if response.status_code == 200:
-        data = response.json()
-        print("======================")
-        print("Marca: ", data['Marca'])
-        print("Modelo: ", data['Modelo'])
-        print("Valor: ", data['Valor'])
-        print("Ano Modelo: ", data['AnoModelo'])
-        print("Combustível: ", data['Combustivel'])
-        print("Codigo Fipe: ", data['CodigoFipe'])
-        print("Mês de referência: ", data['MesReferencia'])
-        print("======================\n")
-    else:
-        print("\n================================================")
-        print("Modelo não encontrado no ano específico: ", response.status_code)
-        print("==================================================\n")
+def listar_modelo(opcao, marca, modelo, ano):
+    modeloEspecifico = ModeloEspecificoIterator.ModeloEspecificoIterator(
+        opcao, marca, modelo, ano)
+    print("======================")
+    print("Marca: ", modeloEspecifico.modelo['Marca'])
+    print("Modelo: ", modeloEspecifico.modelo['Modelo'])
+    print("Valor: ", modeloEspecifico.modelo['Valor'])
+    print("Ano Modelo: ", modeloEspecifico.modelo['AnoModelo'])
+    print("Combustível: ", modeloEspecifico.modelo['Combustivel'])
+    print("Codigo Fipe: ", modeloEspecifico.modelo['CodigoFipe'])
+    print("Mês de referência: ", modeloEspecifico.modelo['MesReferencia'])
+    print("======================\n")
 
 
 menu_Fipe()
